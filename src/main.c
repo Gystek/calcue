@@ -1,6 +1,6 @@
 #include <errno.h>
-#include <lex.h>
-#include <list.h>
+#include <dynarray.h>
+#include <lexer.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,8 +15,8 @@ main (argc, argv)
     {
         FILE		*f;
         struct lexer	lexer;
-        struct list	lexemes;
-        struct lexeme	*lexeme;
+        size_t		j;
+        struct dynarray	lexemes;
 
         if (strcmp (argv[i], "-") == 0)
             f = stdin;
@@ -35,12 +35,16 @@ main (argc, argv)
         lexer = init_lexer (f);
         lexemes = lex (&lexer);
 
-        while ((lexeme = (struct lexeme *)pop_list (&lexemes)))
+        for (j = 0; j < lexemes.size; j++)
         {
+            struct lexeme *lexeme= (struct lexeme *)lexemes.array[j];
+
             print_lexeme (*lexeme);
             destroy_lexeme (*lexeme);
             free (lexeme);
         }
+
+        destroy_dynarray (&lexemes);
     }
 
     return EXIT_SUCCESS;

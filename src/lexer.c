@@ -1,7 +1,7 @@
 #include <ctype.h>
+#include <dynarray.h>
 #include <errno.h>
-#include <lex.h>
-#include <list.h>
+#include <lexer.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,7 @@ init_lexer (f)
     lexer.f = f;
     lexer.line = 1;
     lexer.column = 1;
-    lexer.lexemes = new_list ();
+    lexer.lexemes = new_dynarray ();
 
     return lexer;
 }
@@ -321,7 +321,7 @@ lex_next (lexer, lexeme)
     }
 }
 
-struct list
+struct dynarray
 lex (lexer)
 	struct lexer *lexer;
 {
@@ -341,15 +341,15 @@ lex (lexer)
 _FREE_CURRENT_LEXEMES:
             struct lexeme *to_free;
 
-            while ((to_free = (struct lexeme *)pop_list (&lexer->lexemes)))
+            while ((to_free = (struct lexeme *)pop_dynarray (&lexer->lexemes)))
             {
                 free (to_free);
             }
 
-            return new_list ();
+            return new_dynarray ();
         }
 
-        if (push_list (&lexer->lexemes, (intptr_t)lexeme))
+        if (push_dynarray (&lexer->lexemes, (intptr_t)lexeme))
             goto _FREE_CURRENT_LEXEMES;
     }
 

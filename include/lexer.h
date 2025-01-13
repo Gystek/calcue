@@ -1,7 +1,7 @@
-#ifndef LEX_H_
-# define LEX_H_
+#ifndef LEXER_H_
+# define LEXER_H_
 
-# include <list.h>
+# include <dynarray.h>
 # include <stddef.h>
 # include <stdint.h>
 # include <stdio.h>
@@ -73,11 +73,11 @@ struct lexer {
     uint16_t	line;
     uint16_t	column;
 
-    struct list	lexemes;
+    struct dynarray lexemes;
 };
 
 struct lexer	init_lexer (FILE *);
-struct list	lex (struct lexer *);
+struct dynarray	lex (struct lexer *);
 int		destroy_lexer (struct lexer *);
 
 void		print_lexeme (struct lexeme);
@@ -88,4 +88,4 @@ void		destroy_lexeme (struct lexeme);
  fprintf (stderr, __VA_ARGS__);\
 }
 
-#endif /* LEX_H_ */
+#endif /* LEXER_H_ */

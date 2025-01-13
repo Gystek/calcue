@@ -4,7 +4,7 @@ LD := $(CC)
 CFLAGS := -ansi -Wall -Wextra -Wwrite-strings -Wno-variadic-macros -O1 -Iinclude/
 LDFLAGS :=
 
-CSRC := src/main.c src/lex.c src/list.c
+CSRC := src/main.c src/lexer.c src/dynarray.c
 COBJ := $(CSRC:.c=.o)
 
 all: calc
