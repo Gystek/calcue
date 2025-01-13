@@ -1,10 +1,10 @@
 CC := gcc
 LD := $(CC)
 
-CFLAGS := -ansi -Wall -Wextra -Wwrite-strings -Wno-variadic-macros -O1
+CFLAGS := -ansi -Wall -Wextra -Wwrite-strings -Wno-variadic-macros -O1 -Iinclude/
 LDFLAGS :=
 
-CSRC := src/main.c
+CSRC := src/main.c src/lex.c src/list.c
 COBJ := $(CSRC:.c=.o)
 
 all: calc
