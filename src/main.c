@@ -2,6 +2,7 @@
 #include <dynarray.h>
 #include <lexer.h>
 #include <parser.h>
+#include <resolver.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -10,6 +11,7 @@ main (argc, argv)
 	int		argc;
 	char *const	argv[];
 {
+    int ret = 0;
     int i;
 
     for (i = 1; i < argc; i++)
@@ -21,6 +23,8 @@ main (argc, argv)
 
         struct parser	parser;
         struct expr	*prg;
+
+        struct dynarray	var_indices = new_dynarray ();
 
         if (strcmp (argv[i], "-") == 0)
             f = stdin;
@@ -36,10 +40,16 @@ main (argc, argv)
             }
         }
 
+        #ifdef _DISPLAY_LEXING
+
         puts ("=== LEXING ===");
+
+        #endif
 
         lexer = init_lexer (f);
         lexemes = lex (&lexer);
+
+        #ifdef _DISPLAY_LEXING
 
         for (j = 0; j < lexemes.size; j++)
         {
@@ -48,13 +58,30 @@ main (argc, argv)
             print_lexeme (*lexeme);
         }
 
+        #endif
+
+        #ifdef _DISPLAY_PARSING
+
         puts ("=== PARSING ===");
+
+        #endif
 
         parser = init_parser ((struct lexeme **)lexemes.array, lexemes.size);
 
         prg = parse_program (&parser);
 
+        #ifdef _DISPLAY_PARSING
+
         print_expr (prg, 0);
+
+        #endif
+
+        if ((ret = resolve (prg, &var_indices)))
+            goto cleanup;
+
+cleanup:
+
+        destroy_dynarray (var_indices);
 
         destroy_expr (prg);
 
@@ -69,5 +96,5 @@ main (argc, argv)
         destroy_dynarray (lexemes);
     }
 
-    return EXIT_SUCCESS;
+    return ret;
 }
