@@ -243,7 +243,8 @@ lex_next (lexer, lexeme)
     case POWER:
     case MODULO:
     case EQ:
-    case AND:
+    case OP_AND:
+    case OP_NOT:
     case OR:
         lexeme->type = OPERATOR;
         lexeme->value.op = (enum operator)c;

@@ -10,6 +10,8 @@
  * If undefined variables are used, an error message is printed
  * and -1 is returned.
  */
-int resolve (struct expr *, struct dynarray *);
+int	resolve (struct expr *, struct dynarray *);
+
+size_t	find_var (struct dynarray *, char *);
 
 #endif /* RESOLVER_H_ */

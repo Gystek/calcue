@@ -2,10 +2,11 @@ CC := gcc
 LD := $(CC)
 
 CFLAGS := -ansi -Wall -Wextra -Wwrite-strings -Wno-variadic-macros\
-          -O1 -Iinclude/ -D_DISPLAY_LEXING -D_DISPLAY_PARSING
+          -O1 -Iinclude/ -D_DISPLAY_LEXING -D_DISPLAY_PARSING -D_DISASSEMBLE
 LDFLAGS :=
 
-CSRC := src/main.c src/lexer.c src/dynarray.c src/parser.c src/resolver.c
+CSRC := src/main.c src/lexer.c src/dynarray.c src/parser.c src/resolver.c\
+        src/compiler.c
 COBJ := $(CSRC:.c=.o)
 
 all: calc

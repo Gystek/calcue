@@ -62,9 +62,9 @@ enum operator {
     GE, /* >= */
     LE, /* <= */
 
-    AND = '&',
+    OP_AND = '&',
     OR  = '|',
-    NOT = '~'
+    OP_NOT = '~'
 };
 
 struct lexeme {

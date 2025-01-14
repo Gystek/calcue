@@ -2,7 +2,7 @@
 #include <resolver.h>
 #include <string.h>
 
-static size_t
+size_t
 find_var (vars, name)
 	struct dynarray	*vars;
 	char		*name;

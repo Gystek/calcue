@@ -224,7 +224,7 @@ static struct expr *
 parse_unary (parser)
 	struct parser *parser;
 {
-    if (ARE_OPS(parser, MINUS, NOT))
+    if (ARE_OPS(parser, MINUS, OP_NOT))
     {
         struct expr  *operand, *unary;
         struct lexeme op = consume (parser);
@@ -317,7 +317,7 @@ GENERATE_OP_PARSER(parse_sum, parse_mul, TIMES, DIVISION, MODULO)
 GENERATE_OP_PARSER(parse_cmp, parse_sum, PLUS, MINUS)
 GENERATE_OP_PARSER(parse_eqneq, parse_cmp, GT, LT, GE, LE)
 GENERATE_OP_PARSER(parse_logop, parse_eqneq, EQ, NEQ)
-GENERATE_OP_PARSER(parse_expr, parse_logop, AND, OR)
+GENERATE_OP_PARSER(parse_expr, parse_logop, OP_AND, OR)
 
 static struct expr *
 parse_binding (parser)

@@ -1,5 +1,6 @@
-#include <errno.h>
+#include <compiler.h>
 #include <dynarray.h>
+#include <errno.h>
 #include <lexer.h>
 #include <parser.h>
 #include <resolver.h>
@@ -23,6 +24,8 @@ main (argc, argv)
 
         struct parser	parser;
         struct expr	*prg;
+
+        struct bytecode	bc;
 
         struct dynarray	var_indices = new_dynarray ();
 
@@ -78,6 +81,22 @@ main (argc, argv)
 
         if ((ret = resolve (prg, &var_indices)))
             goto cleanup;
+
+        bc = init_bytecode (&var_indices);
+
+        if (compile (prg, &bc))
+        {
+            fprintf (stderr, "error: bytecode too long\n");
+            goto cleanup;
+        }
+
+        bc.bytes[bc.byte_c++] = HLT;
+
+        #ifdef _DISASSEMBLE
+
+        disassembly (&bc);
+
+        #endif
 
 cleanup:
 
