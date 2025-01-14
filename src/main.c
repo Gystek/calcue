@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <dynarray.h>
 #include <lexer.h>
+#include <parser.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,6 +19,9 @@ main (argc, argv)
         size_t		j;
         struct dynarray	lexemes;
 
+        struct parser	parser;
+        struct expr	*prg;
+
         if (strcmp (argv[i], "-") == 0)
             f = stdin;
         else
@@ -32,6 +36,8 @@ main (argc, argv)
             }
         }
 
+        puts ("=== LEXING ===");
+
         lexer = init_lexer (f);
         lexemes = lex (&lexer);
 
@@ -40,11 +46,27 @@ main (argc, argv)
             struct lexeme *lexeme= (struct lexeme *)lexemes.array[j];
 
             print_lexeme (*lexeme);
+        }
+
+        puts ("=== PARSING ===");
+
+        parser = init_parser ((struct lexeme **)lexemes.array, lexemes.size);
+
+        prg = parse_program (&parser);
+
+        print_expr (prg, 0);
+
+        destroy_expr (prg);
+
+        for (j = 0; j < lexemes.size; j++)
+        {
+            struct lexeme *lexeme= (struct lexeme *)lexemes.array[j];
+
             destroy_lexeme (*lexeme);
             free (lexeme);
         }
 
-        destroy_dynarray (&lexemes);
+        destroy_dynarray (lexemes);
     }
 
     return EXIT_SUCCESS;

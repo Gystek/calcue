@@ -187,7 +187,7 @@ lex_alpha (lexer, lexeme, c)
         if (strcmp (buffer, keywords[j]) == 0)
         {
             lexeme->type = KEYWORD;
-            lexeme->value.kw_id = j;
+            lexeme->value.kw = keywords[j];
 
             return lexeme;
         }
@@ -395,7 +395,7 @@ print_lexeme (lexeme)
         printf ("FLOAT(%ff)\n", lexeme.value.flt);
         break;
     case KEYWORD:
-        printf ("KEYWORD(%s)\n", keywords[lexeme.value.kw_id]);
+        printf ("KEYWORD(%s)\n", lexeme.value.kw);
         break;
     case IDENTIFIER:
         printf ("IDENTIFIER(%s)\n", lexeme.value.str);

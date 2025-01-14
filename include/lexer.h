@@ -6,15 +6,29 @@
 # include <stdint.h>
 # include <stdio.h>
 
-# define KW_N (9)
+# define KW_N (12)
+# define PRIMS_START (6)
 
+
+/* Primitives are at the end of the keywords
+ * array to facilitate access to them by the parser.
+ * Increment PRIMS_START as you add non-primitive
+ * (syntactical) keywords.
+ */
 static const char *const keywords[KW_N] = {
-    "read",
-    "print",
-    "dump",
     "if",
     "then",
     "else",
+    "end",
+
+    "while",
+    "do",
+
+    /* primitives after this */
+
+    "read",
+    "print",
+    "dump",
 
     "log",
     "exp",
@@ -50,6 +64,7 @@ enum operator {
 
     AND = '&',
     OR  = '|',
+    NOT = '~'
 };
 
 struct lexeme {
@@ -59,7 +74,7 @@ struct lexeme {
        int32_t		itg;
        double		flt;
        enum operator	op;
-       size_t		kw_id;
+       const char	*kw;
    } 			value;
    uint16_t		line;
    uint16_t		column;
@@ -84,7 +99,7 @@ void		print_lexeme (struct lexeme);
 void		destroy_lexeme (struct lexeme);
 
 # define __lexer_perror(lexer, ...) {\
- fprintf (stderr, "input %u:%u: ", lexer->line, lexer->column);\
+ fprintf (stderr, "input %u:%u: ", (lexer)->line, (lexer)->column);\
  fprintf (stderr, __VA_ARGS__);\
 }
 

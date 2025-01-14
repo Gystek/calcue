@@ -13,6 +13,24 @@ new_dynarray (void)
     return dynarray;
 }
 
+struct dynarray
+new_dynarray_with_capacity (capacity)
+	size_t capacity;
+{
+    struct dynarray dynarray;
+
+    dynarray.array = malloc(sizeof(intptr_t) * capacity);
+
+    if (!dynarray.array)
+        return new_dynarray ();
+
+    dynarray.capacity = capacity;
+    dynarray.size = 0;
+
+    return dynarray;
+}
+
+
 int
 push_dynarray (array, val)
 	struct dynarray	*array;
@@ -47,7 +65,7 @@ pop_dynarray (array)
 
 void
 destroy_dynarray (array)
-	struct dynarray *array;
+	struct dynarray array;
 {
-    free (array->array);
+    free (array.array);
 }
