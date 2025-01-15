@@ -5,14 +5,6 @@
 # include <lexer.h>
 # include <stdint.h>
 
-static size_t prim_arities[KW_N - PRIMS_START] = {
-    1, /* print */
-    0, /* dump */
-    1, /* log */
-    1, /* exp */
-    1, /* sqrt */
-};
-
 /* statements are also referred to as expressions
  * it is not really that important
  */

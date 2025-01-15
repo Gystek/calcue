@@ -165,6 +165,8 @@ __primitive_print (vm)
 
     print_object (obj);
 
+    putchar ('\n');
+
     return 0;
 }
 
@@ -422,6 +424,7 @@ cycle (vm)
     switch (instr)
     {
     case HLT:
+        vm->sp = 0;
         return 1;
     case INT:
         stack_push (vm, make_mem_i32 (read4 (vm)));

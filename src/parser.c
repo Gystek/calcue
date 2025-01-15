@@ -256,6 +256,14 @@ parse_unary (parser)
     return parse_literal (parser);
 }
 
+static size_t prim_arities[KW_N - PRIMS_START] = {
+    1, /* print */
+    0, /* dump */
+    1, /* log */
+    1, /* exp */
+    1, /* sqrt */
+};
+
 static struct expr *
 parse_pow (parser)
 	struct parser *parser;
