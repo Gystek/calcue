@@ -33,12 +33,10 @@ push_int (bc, x)
 	struct bytecode *bc;
 	int32_t		x;
 {
-    int32_t y = x & 0xFFFFFFFF;
-
-    push_byte (bc, y & 0xFF);
-    push_byte (bc, (y >> 8) & 0xFF);
-    push_byte (bc, (y >> 16) & 0xFF);
-    return push_byte (bc, (y >> 24) & 0xFF);
+    push_byte (bc, x & 0xFF);
+    push_byte (bc, (x >> 8) & 0xFF);
+    push_byte (bc, (x >> 16) & 0xFF);
+    return push_byte (bc, (x >> 24) & 0xFF);
 }
 
 int
@@ -46,7 +44,7 @@ push_flt (bc, x)
 	struct bytecode	*bc;
 	double		x;
 {
-    int64_t y = (int64_t)x & 0xFFFFFFFFFFFFFFFF;
+    int64_t y = *(int64_t *)&x;
 
     push_byte (bc, y & 0xFF);
     push_byte (bc, (y >> 8) & 0xFF);
@@ -293,12 +291,19 @@ static const char *const __opcode_names[] =
   "NOT", "CEQ", "ORD", "ADD", "SUB", "NEG", "MUL", "DIV", "MOD", "POW",
   "RDV" };
 
-#define PRINT_NEXT(__n) {\
-                       size_t __j = 0;\
-                       for (; __j < __n; __j++)\
-                       {\
-                        printf (" %02x", bc->bytes[++i]);\
-                       }\
+static inline size_t
+__print_next (bc, n, s)
+	struct bytecode	*bc;
+	size_t		n, s;
+{
+    size_t i;
+
+    for (i = 0; i < n;)
+    {
+        printf (" %02x", bc->bytes[s + ++i]);
+    }
+
+    return n;
 }
 
 void
@@ -316,7 +321,7 @@ disassembly (bc)
        switch (current)
        {
        case FLT:
-           PRINT_NEXT(8);
+           i += __print_next (bc, 8, i);
            break;
        case RDV:
        case INT:
@@ -325,7 +330,7 @@ disassembly (bc)
        case PRM:
        case JMP:
        case JPI:
-           PRINT_NEXT(4);
+           i += __print_next (bc, 4, i);
            break;
        default:
            break;

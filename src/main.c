@@ -6,6 +6,7 @@
 #include <resolver.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vm.h>
 
 int
 main (argc, argv)
@@ -26,6 +27,8 @@ main (argc, argv)
         struct expr	*prg;
 
         struct bytecode	bc;
+
+        struct vm vm;
 
         struct dynarray	var_indices = new_dynarray ();
 
@@ -100,6 +103,23 @@ main (argc, argv)
         disassembly (&bc);
 
         #endif
+
+        if (!init_vm (&bc, &vm))
+            goto cleanup;
+
+        if (run_vm (&vm) != 0)
+        {
+            destroy_vm (vm);
+            goto cleanup;
+        }
+
+        #ifdef _DUMP_VM
+
+        dump_vm (vm);
+
+        #endif
+
+        destroy_vm (vm);
 
 cleanup:
 

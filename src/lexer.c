@@ -56,9 +56,6 @@ lexer_get (lexer)
     return c;
 }
 
-
-#define MAX_NUMBER_LEX (512)
-
 struct lexeme *
 lex_number (lexer, lexeme, c)
 	struct lexer	*lexer;

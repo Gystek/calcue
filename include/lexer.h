@@ -9,7 +9,6 @@
 # define KW_N (12)
 # define PRIMS_START (7)
 
-
 /* Primitives are at the end of the keywords
  * array to facilitate access to them by the parser.
  * Increment PRIMS_START as you add non-primitive
@@ -92,6 +91,8 @@ struct lexer {
 
     struct dynarray lexemes;
 };
+
+#define MAX_NUMBER_LEX (512)
 
 struct lexer	init_lexer (FILE *);
 struct dynarray	lex (struct lexer *);
