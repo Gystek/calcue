@@ -73,6 +73,9 @@ main (argc, argv)
 
         prg = parse_program (&parser);
 
+        if (!prg)
+            goto cleanup;
+
         #ifdef _DISPLAY_PARSING
 
         print_expr (prg, 0);

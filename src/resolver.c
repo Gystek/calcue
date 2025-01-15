@@ -30,6 +30,14 @@ resolve (expr, vars)
 
     switch (expr->type)
     {
+    case EXPR_READ:
+        {
+            char *name = expr->value.str;
+
+            if (find_var (vars, name) >= vars->size)
+                push_dynarray (vars, (intptr_t)name);
+        }
+        break;
     case EXPR_BINDING:
         {
             char *name = ((struct expr *)(expr->children.array[0]))->value.str;

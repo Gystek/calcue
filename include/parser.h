@@ -6,7 +6,6 @@
 # include <stdint.h>
 
 static size_t prim_arities[KW_N - PRIMS_START] = {
-    1, /* read */
     1, /* print */
     0, /* dump */
     1, /* log */
@@ -29,6 +28,7 @@ enum expr_type {
 
     EXPR_IF,
     EXPR_WHILE,
+    EXPR_READ,
 
     EXPR_PROGRAM
 };

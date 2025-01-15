@@ -138,6 +138,12 @@ compile (expr, bytecode)
 
             bytecode->byte_c = jumpi_else;
             push_byte (bytecode, JMP);
+            /*
+             * if there is an `else' clause, additional space needs
+             * to be allocated for the `jump' above it at the end of
+             * the `then' clause.  the necessary space is 1 byte opcode
+             * and 4 bytes address.
+             */
             ret = push_int (bytecode, else_begin + ((expr->children.size == 3) ? 5 : 0));
 
             bytecode->byte_c = else_begin;
@@ -264,6 +270,13 @@ compile (expr, bytecode)
         }
     case EXPR_PROGRAM:
         break;
+    case EXPR_READ:
+        {
+            size_t x = find_var (bytecode->vars, expr->value.str);
+
+            push_byte (bytecode, RDV);
+            return push_int (bytecode, x);
+        }
     }
 
    for (i = 0; i < expr->children.size; i++)
@@ -277,7 +290,8 @@ compile (expr, bytecode)
 
 static const char *const __opcode_names[] =
 { "HLT", "INT", "FLT", "STR", "LOD", "PRM", "JMP", "JPI", "AND", "OOR",
-  "NOT", "CEQ", "ORD", "ADD", "SUB", "NEG", "MUL", "DIV", "MOD", "POW" };
+  "NOT", "CEQ", "ORD", "ADD", "SUB", "NEG", "MUL", "DIV", "MOD", "POW",
+  "RDV" };
 
 #define PRINT_NEXT(__n) {\
                        size_t __j = 0;\
@@ -304,6 +318,7 @@ disassembly (bc)
        case FLT:
            PRINT_NEXT(8);
            break;
+       case RDV:
        case INT:
        case STR:
        case LOD:
