@@ -501,53 +501,42 @@ cycle (vm)
             if (lhs.type == M_I32)
             {
                 if (rhs.type == M_I32)
-                {
                     stack_push (vm, bool_to_mem (lhs.value.i == rhs.value.i,
                                              M_I32));
-                }
                 else
-                {
                     stack_push (vm, bool_to_mem (false, M_I32));
-                }
             }
             else
             {
                 if (rhs.type == M_F64)
-                {
                     stack_push (vm, bool_to_mem (lhs.value.d == rhs.value.d,
                                              M_F64));
-                }
                 else
-                {
                     stack_push (vm, bool_to_mem (false, M_F64));
-                }
             }
         }
         break;
     case ORD:
         {
-            struct memory_object rhs, lhs, ord;
+            struct memory_object rhs, lhs, obj;
+            int ord;
             rhs = stack_pop (vm);
             lhs = stack_pop (vm);
 
-            if (lhs.type == M_I32 && rhs.type == M_I32)
-            {
-                ord = bool_to_mem (__ORD(lhs.value.i, rhs.value.i));
-            }
-            if (lhs.type == M_F64 && rhs.type == M_I32)
-            {
-                ord = bool_to_mem (__ORD(lhs.value.d, rhs.value.i));
-            }
-            if (lhs.type == M_I32 && rhs.type == M_F64)
-            {
-                ord = bool_to_mem (__ORD(lhs.value.i, rhs.value.d));
-            }
-            else
-            {
-                ord = bool_to_mem (__ORD(lhs.value.d, rhs.value.d));
-            }
+            obj.type = M_I32;
 
-            stack_push (vm, ord);
+            if (lhs.type == M_I32 && rhs.type == M_I32)
+                ord = __ORD(lhs.value.i, rhs.value.i);
+            else if (lhs.type == M_F64 && rhs.type == M_I32)
+                ord = __ORD(lhs.value.d, rhs.value.i);
+            else if (lhs.type == M_I32 && rhs.type == M_F64)
+                ord = __ORD(lhs.value.i, rhs.value.d);
+            else
+                ord = __ORD(lhs.value.d, rhs.value.d);
+
+            obj.value.i = ord;
+
+            stack_push (vm, obj);
         }
         break;
     case NEG:
@@ -617,9 +606,13 @@ cycle (vm)
          break;
     case RDV:
         {
-            char buffer[MAX_NUMBER_LEX + 1] = { 0 };
+            char buffer[MAX_NUMBER_LEX + 1] = { 0 }, *iend = NULL;
             int32_t i;
             double d;
+
+            struct memory_object obj;
+
+            uint32_t var = (uint32_t)read4 (vm);
 
             if (!fgets (buffer, MAX_NUMBER_LEX, stdin))
             {
@@ -632,14 +625,14 @@ cycle (vm)
             buffer[strlen (buffer) - 1] = 0;
 
             errno = 0;
-            i = strtol (buffer, NULL, 10);
+            i = strtol (buffer, &iend, 10);
 
-            if (errno != 0)
+            if (errno != 0 || iend != buffer + strlen (buffer))
             {
                 errno = 0;
-                d = strtod (buffer, NULL);
+                d = strtod (buffer, &iend);
 
-                if (errno != 0)
+                if (errno != 0 || iend != buffer + strlen (buffer))
                 {
                     fprintf (stderr, "error: `%s' is not a valid number\n",
                                      buffer);
@@ -647,10 +640,12 @@ cycle (vm)
                     return -1;
                 }
 
-                stack_push (make_mem_f64 (d));
+                obj = make_mem_f64 (d);
             }
             else
-                stack_push (make_mem_i32 (i));
+                obj = make_mem_i32 (i);
+
+            vm->environment[var] = obj;
         }
         break;
     }
