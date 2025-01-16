@@ -150,6 +150,13 @@ static int
 valid_identifier_c (c)
 	char c;
 {
+    return (isalnum (c) || c == '_');
+}
+
+static int
+valid_identifier_c_start (c)
+	char c;
+{
     return (isalpha (c) || c == '_');
 }
 
@@ -310,7 +317,7 @@ lex_next (lexer, lexeme)
     default:
         if (isdigit (c))
             return lex_number (lexer, lexeme, c);
-        if (valid_identifier_c (c))
+        if (valid_identifier_c_start (c))
             return lex_alpha (lexer, lexeme, c);
 
         __lexer_perror (lexer, "unexpected character: `%c'\n", c);
