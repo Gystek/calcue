@@ -390,7 +390,7 @@ print_lexeme (lexeme)
         printf ("INT(%d)\n", lexeme.value.itg);
         break;
     case FLOAT:
-        printf ("FLOAT(%ff)\n", lexeme.value.flt);
+        printf ("FLOAT(%f)\n", lexeme.value.flt);
         break;
     case KEYWORD:
         printf ("KEYWORD(%s)\n", lexeme.value.kw);

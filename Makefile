@@ -4,7 +4,7 @@ LD := $(CC)
 CFLAGS := -std=c99 -Wall -Wextra -Wwrite-strings\
           -Wno-variadic-macros -O0 -Iinclude/\
           #-D_DUMP_VM -D_DISASSEMBLE\
-          #-D_DISPLAY_LEXING #-D_DISPLAY_PARSING -D_DUMP_VM_EVERY_CYCLE
+          #-D_DISPLAY_LEXING -D_DISPLAY_PARSING -D_DUMP_VM_EVERY_CYCLE
 LDFLAGS :=
 
 CSRC := src/main.c src/lexer.c src/dynarray.c src/parser.c src/resolver.c\

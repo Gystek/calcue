@@ -154,7 +154,7 @@ print_object (obj)
     if (obj.type == M_I32)
         printf ("%d", obj.value.i);
     else
-        printf ("%ff", obj.value.d);
+        printf ("%f", obj.value.d);
 }
 
 static int
@@ -359,7 +359,14 @@ __mem_div (lhs, rhs)
     if (lhs.type == M_I32 && rhs.type == M_I32)
     {
         obj.type = M_I32;
-        obj.value.i = lhs.value.i / rhs.value.i;
+
+        if (rhs.value.i == 0)
+        {
+            fprintf (stderr, "error: division by zero\n");
+            obj.value.i = 0;
+        }
+        else
+            obj.value.i = lhs.value.i / rhs.value.i;
     }
     else if (lhs.type == M_F64 && rhs.type == M_I32)
         obj.value.d = lhs.value.d / (double)rhs.value.i;
@@ -428,6 +435,12 @@ cycle (vm)
     switch (instr)
     {
     case HLT:
+        if (vm->sp != 0)
+        {
+            printf ("=> ");
+            print_object (vm->stack[vm->sp - 1]);
+            putchar ('\n');
+        }
         vm->sp = 0;
         return 1;
     case INT:
@@ -550,12 +563,13 @@ cycle (vm)
             struct memory_object obj = stack_pop (vm);
 
             if (obj.type == M_I32)
-                obj.value.i = -obj.value.i;
+                obj.value.i = obj.value.i * -1;
             else
-                obj.value.d = -obj.value.d;
+                obj.value.d = obj.value.d * -1.0;
 
             stack_push (vm, obj);
         }
+        break;
     case ADD:
         {
             struct memory_object rhs, lhs;

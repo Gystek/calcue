@@ -795,7 +795,7 @@ print_expr (expr, lvl)
         printf ("EXPR_INTEGER (%d)\n", expr->value.itg);
         return;
     case EXPR_FLOAT:
-        printf ("EXPR_FLOAT (%ff)\n", expr->value.flt);
+        printf ("EXPR_FLOAT (%f)\n", expr->value.flt);
         return;
     case EXPR_PRIMCALL:
         printf ("EXPR_PRIMCALL #%lu\n", expr->value.prim);
