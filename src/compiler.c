@@ -241,19 +241,23 @@ compile (expr, bytecode)
                 return push_byte (bytecode, NOT);
             case GT:
                 push_byte (bytecode, ORD);
+                push_byte (bytecode, INT);
                 push_int (bytecode, 1);
                 return push_byte (bytecode, CEQ);
             case LT:
                 push_byte (bytecode, ORD);
+                push_byte (bytecode, INT);
                 push_int (bytecode, -1);
                 return push_byte (bytecode, CEQ);
             case GE:
                 push_byte (bytecode, ORD);
+                push_byte (bytecode, INT);
                 push_int (bytecode, -1);
                 push_byte (bytecode, CEQ);
                 return push_byte (bytecode, NOT);
             case LE:
                 push_byte (bytecode, ORD);
+                push_byte (bytecode, INT);
                 push_int (bytecode, 1);
                 push_byte (bytecode, CEQ);
                 return push_byte (bytecode, NOT);

@@ -59,7 +59,6 @@ run_file (f)
         if (resolve (prg, &var_indices))
             goto cleanup;
 
-
         bc = init_bytecode (&var_indices);
 
         if (compile (prg, &bc))

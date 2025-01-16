@@ -37,14 +37,13 @@ resolve (expr, vars)
             if (find_var (vars, name) >= vars->size)
                 push_dynarray (vars, (intptr_t)name);
         }
-        break;
+        return 0;
     case EXPR_BINDING:
         {
             char *name = ((struct expr *)(expr->children.array[0]))->value.str;
 
             if (find_var (vars, name) >= vars->size)
                 push_dynarray (vars, (intptr_t)name);
-
         }
         break;
     case EXPR_IDENTIFIER:

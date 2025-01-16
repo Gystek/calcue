@@ -421,6 +421,10 @@ cycle (vm)
 {
     enum opcode instr = read (vm);
 
+    #ifdef _DUMP_VM_EVERY_CYCLE
+    	printf ("op = %x\n", instr);
+    #endif
+
     switch (instr)
     {
     case HLT:
@@ -495,25 +499,27 @@ cycle (vm)
     case CEQ:
         {
             struct memory_object rhs, lhs;
+            bool b;
+
             rhs = stack_pop (vm);
             lhs = stack_pop (vm);
 
             if (lhs.type == M_I32)
             {
                 if (rhs.type == M_I32)
-                    stack_push (vm, bool_to_mem (lhs.value.i == rhs.value.i,
-                                             M_I32));
+                    b = lhs.value.i == rhs.value.i;
                 else
-                    stack_push (vm, bool_to_mem (false, M_I32));
+                    b = false;
             }
             else
             {
                 if (rhs.type == M_F64)
-                    stack_push (vm, bool_to_mem (lhs.value.d == rhs.value.d,
-                                             M_F64));
+                    b = lhs.value.d == rhs.value.d;
                 else
-                    stack_push (vm, bool_to_mem (false, M_F64));
+                    b = false;
             }
+
+            stack_push (vm, bool_to_mem (b, M_I32));
         }
         break;
     case ORD:

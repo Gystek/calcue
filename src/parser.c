@@ -367,6 +367,20 @@ _CLEANUP_EXPRS:
     return NULL;
 }
 
+static void
+skip_separators (parser)
+	struct parser *parser;
+{
+        struct lexeme **kwtemp = lookahead (parser, 0);
+
+        while (kwtemp && (*kwtemp)->type == SEPARATOR)
+        {
+            /* separator */
+            consume (parser);
+            kwtemp = lookahead (parser, 0);
+        }
+}
+
 struct expr *
 parse_program (parser)
 	struct parser *parser;
@@ -395,14 +409,7 @@ parse_program (parser)
 
         push_dynarray (&prg->children, (intptr_t)stm);
 
-        kwtemp = lookahead (parser, 0);
-
-        while (kwtemp && (*kwtemp)->type == SEPARATOR)
-        {
-            /* separator */
-            consume (parser);
-            kwtemp = lookahead (parser, 0);
-        }
+        skip_separators (parser);
 
         kwtemp = lookahead (parser, 0);
     } while (kwtemp);
@@ -441,12 +448,7 @@ parse_program_until_kw (parser, kw)
 
         kwtemp = lookahead (parser, 0);
 
-        while (kwtemp && (*kwtemp)->type == SEPARATOR)
-        {
-            /* separator */
-            consume (parser);
-            kwtemp = lookahead (parser, 0);
-        }
+        skip_separators (parser);
 
         kwtemp = lookahead (parser, 0);
     } while (kwtemp
@@ -495,6 +497,8 @@ parse_if_then (parser)
     /* then */
     consume (parser);
 
+    skip_separators (parser);
+
     then = new_expr (EXPR_PROGRAM);
 
     if (!then)
@@ -514,14 +518,7 @@ parse_if_then (parser)
 
         push_dynarray (&then->children, (intptr_t)stm);
 
-        kwtemp = lookahead (parser, 0);
-
-        while (kwtemp && (*kwtemp)->type == SEPARATOR)
-        {
-            /* separator */
-            consume (parser);
-            kwtemp = lookahead (parser, 0);
-        }
+        skip_separators (parser);
 
         kwtemp = lookahead (parser, 0);
     } while (kwtemp
@@ -564,6 +561,8 @@ parse_if_then (parser)
 
     /* else */
     consume (parser);
+
+    skip_separators (parser);
 
     elsethen = parse_program_until_kw (parser, "end");
 
@@ -659,8 +658,10 @@ parse_while_do (parser)
         return NULL;
     }
 
-    /* then */
+    /* do */
     consume (parser);
+
+    skip_separators (parser);
 
     prg = parse_program_until_kw (parser, "end");
 
@@ -738,6 +739,7 @@ new_expr (type)
         return NULL;
 
     expr->type = type;
+    expr->children = new_dynarray ();
 
     return expr;
 }
