@@ -141,30 +141,25 @@ absd (x)
     return max (x, -x);
 }
 
-#ifndef _SQRT_PRECISION
-# define _SQRT_PRECISION (1000000)
-#endif
-
-/* Calculates the square root of x using Newton's method */
+/* Calculates the square root of x using Quake III's rsqrt
+ * (although adapted for double precision numbers)
+ * */
 double
 sqrt (x)
 	double x;
 {
-    double s = 1.0;
-    double delta = absd (x - s * s);
+    int64_t i;
+    double x2, y;
 
-    for (;;)
-    {
-        double nd;
+    x2 = x * 0.5;
+    y  = x;
 
-        s = (s + x / s) / 2;
-        nd = absd (x - s * s);
+    i  = *(int64_t *)&y;
+    i  = 0x5fe6eb50c7b537a9 - (i >> 1);
 
-        if (nd >= delta || delta < min(1 / _SQRT_PRECISION, x / _SQRT_PRECISION))
-            break;
+    y  = *(double *)&i;
+    y  = y * (1.5 - (x2 * y * y));
+    y  = y * (1.5 - (x2 * y * y));
 
-        delta = nd;
-    }
-
-    return s;
+    return 1 / y;
 }
