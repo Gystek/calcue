@@ -272,13 +272,6 @@ compile (expr, bytecode)
         }
     case EXPR_PROGRAM:
         break;
-    case EXPR_READ:
-        {
-            size_t x = find_var (bytecode->vars, expr->value.str);
-
-            push_byte (bytecode, RDV);
-            return push_int (bytecode, x);
-        }
     }
 
    for (i = 0; i < expr->children.size; i++)
@@ -292,8 +285,7 @@ compile (expr, bytecode)
 
 static const char *const __opcode_names[] =
 { "HLT", "INT", "FLT", "STR", "LOD", "PRM", "JMP", "JPI", "AND", "OOR",
-  "NOT", "CEQ", "ORD", "ADD", "SUB", "NEG", "MUL", "DIV", "MOD", "POW",
-  "RDV" };
+  "NOT", "CEQ", "ORD", "ADD", "SUB", "NEG", "MUL", "DIV", "MOD", "POW" };
 
 static inline size_t
 __print_next (bc, n, s)
@@ -327,7 +319,6 @@ disassembly (bc)
        case FLT:
            i += __print_next (bc, 8, i);
            break;
-       case RDV:
        case INT:
        case STR:
        case LOD:

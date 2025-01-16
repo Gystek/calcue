@@ -135,7 +135,7 @@ parse_identifier (parser)
 /* GSBNF : Gustek's Shady Backus-Naur Form
  *
  * program   ::= (statement (SEPARATOR+ statement)*)?		--
- * statement ::= read | binding | if-then | while-do | expr	--
+ * statement ::= binding | if-then | while-do | expr	--
  * binding   ::= IDENTIFIER BINDING expr			--
  * if-then   ::= IF expr THEN program (ELSE program)? END	--
  * while-do  ::= WHILE expr DO program END			--
@@ -257,6 +257,7 @@ parse_unary (parser)
 }
 
 static size_t prim_arities[KW_N - PRIMS_START] = {
+    0, /* read */
     1, /* print */
     0, /* dump */
     1, /* log */
@@ -609,26 +610,6 @@ _CLEANUP_EXPRS:
 }
 
 static struct expr *
-parse_read (parser)
-	struct parser *parser;
-{
-    struct expr *expr;
-
-    /* read - assured to succeed */
-    consume (parser);
-
-    expr = parse_identifier (parser);
-
-    if (!expr)
-        return NULL;
-
-    /* clever trick */
-    expr->type = EXPR_READ;
-
-    return expr;
-}
-
-static struct expr *
 parse_while_do (parser)
 	struct parser *parser;
 {
@@ -717,14 +698,10 @@ parse_one (parser)
     if (IS_KEYWORD(next, "while"))
         return parse_while_do (parser);
 
-    if (IS_KEYWORD(next, "read"))
-        return parse_read (parser);
-
     if ((*next)->type == IDENTIFIER
         && subs
         && (*subs)->type == BINDING)
         return parse_binding (parser);
-
 
     return parse_expr (parser);
 }
@@ -785,9 +762,6 @@ print_expr (expr, lvl)
     case EXPR_BINDING:
         puts ("EXPR_BINDING");
         break;
-    case EXPR_READ:
-        printf ("EXPR_READ (%s)\n", expr->value.str);
-        return;
     case EXPR_IDENTIFIER:
         printf ("EXPR_IDENTIFIER (%s)\n", expr->value.str);
         return;

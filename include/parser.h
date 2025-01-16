@@ -20,7 +20,6 @@ enum expr_type {
 
     EXPR_IF,
     EXPR_WHILE,
-    EXPR_READ,
 
     EXPR_PROGRAM
 };

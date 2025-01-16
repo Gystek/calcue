@@ -158,6 +158,52 @@ print_object (obj)
 }
 
 static int
+__primitive_read (vm)
+	struct vm *vm;
+{
+    char buffer[MAX_NUMBER_LEX + 1] = { 0 }, *iend = NULL;
+    int32_t i;
+    double d;
+
+    struct memory_object obj;
+
+    if (!fgets (buffer, MAX_NUMBER_LEX, stdin))
+    {
+        fprintf (stderr, "error: failed to read keyboard\n");
+
+        return -1;
+    }
+
+    /* remove trailing \n */
+    buffer[strlen (buffer) - 1] = 0;
+
+    errno = 0;
+    i = strtol (buffer, &iend, 10);
+
+    if (errno != 0 || iend != buffer + strlen (buffer))
+    {
+        errno = 0;
+        d = strtod (buffer, &iend);
+
+        if (errno != 0 || iend != buffer + strlen (buffer))
+        {
+            fprintf (stderr, "error: `%s' is not a valid number\n",
+                             buffer);
+
+            return -1;
+        }
+
+        obj = make_mem_f64 (d);
+    }
+    else
+        obj = make_mem_i32 (i);
+
+    stack_push (vm, obj);
+
+    return 0;
+}
+
+static int
 __primitive_print (vm)
 	struct vm *vm;
 {
@@ -243,6 +289,7 @@ __primitive_sqrt (vm)
 
 static int (*__primitives[KW_N - PRIMS_START])(struct vm *) =
 {
+    __primitive_read,
     __primitive_print,
     __primitive_dump,
     __primitive_log,
@@ -624,50 +671,6 @@ cycle (vm)
             stack_push (vm, __mem_pow (lhs, rhs));
          }
          break;
-    case RDV:
-        {
-            char buffer[MAX_NUMBER_LEX + 1] = { 0 }, *iend = NULL;
-            int32_t i;
-            double d;
-
-            struct memory_object obj;
-
-            uint32_t var = (uint32_t)read4 (vm);
-
-            if (!fgets (buffer, MAX_NUMBER_LEX, stdin))
-            {
-                fprintf (stderr, "error: failed to read keyboard\n");
-
-                return -1;
-            }
-
-            /* remove trailing \n */
-            buffer[strlen (buffer) - 1] = 0;
-
-            errno = 0;
-            i = strtol (buffer, &iend, 10);
-
-            if (errno != 0 || iend != buffer + strlen (buffer))
-            {
-                errno = 0;
-                d = strtod (buffer, &iend);
-
-                if (errno != 0 || iend != buffer + strlen (buffer))
-                {
-                    fprintf (stderr, "error: `%s' is not a valid number\n",
-                                     buffer);
-
-                    return -1;
-                }
-
-                obj = make_mem_f64 (d);
-            }
-            else
-                obj = make_mem_i32 (i);
-
-            vm->environment[var] = obj;
-        }
-        break;
     }
 
     #ifdef _DUMP_VM_EVERY_CYCLE

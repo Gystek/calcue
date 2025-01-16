@@ -31,7 +31,6 @@ enum opcode : uint8_t
     DIV = 0x11,
     MOD = 0x12,
     POW = 0x13,
-    RDV = 0x14, /* read standard input into the following variable - 4 */
 };
 
 struct bytecode {

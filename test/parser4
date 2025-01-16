@@ -1,1 +1,1 @@
-read x ; print x
+x := read ; print x

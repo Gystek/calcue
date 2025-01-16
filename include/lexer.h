@@ -7,7 +7,7 @@
 # include <stdio.h>
 
 # define KW_N (12)
-# define PRIMS_START (7)
+# define PRIMS_START (6)
 
 /* Primitives are at the end of the keywords
  * array to facilitate access to them by the parser.
@@ -24,10 +24,9 @@ static const char *const keywords[KW_N] = {
     "while",
     "do",
 
-    "read",
-
     /* primitives after this */
 
+    "read",
     "print",
     "dump",
 
